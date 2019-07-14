@@ -81,7 +81,8 @@ public class MatchDetailActivity extends AppCompatActivity {
     }
 
     public void launchGame(View view) {
-        Intent intent = new Intent(this, GameSelect.class);
+        Intent intent = new Intent(this, GameInProgress.class);
+        intent.putExtra("GID", "1");
         startActivity(intent);
 //        finish();
     }

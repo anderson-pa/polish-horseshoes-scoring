@@ -2,7 +2,7 @@
 # generated on 2017/06/11 08:31:13
 #
 # --table-start--
-dataClass=info.andersonpa.polishhorseshoes.db.Game
+dataClass=info.andersonpa.polishhorseshoesscoring.db.Game
 tableName=game
 # --table-fields-start--
 # --field-start--
@@ -51,7 +51,7 @@ foreignCollection=true
 # --table-end--
 #################################
 # --table-start--
-dataClass=info.andersonpa.polishhorseshoes.db.TeamStats
+dataClass=info.andersonpa.polishhorseshoesscoring.db.TeamStats
 tableName=teamstats
 # --table-fields-start--
 # --field-start--
@@ -68,7 +68,7 @@ fieldName=nLosses
 # --table-end--
 #################################
 # --table-start--
-dataClass=info.andersonpa.polishhorseshoes.db.Throw
+dataClass=info.andersonpa.polishhorseshoesscoring.db.Throw
 tableName=throw
 # --table-fields-start--
 # --field-start--
