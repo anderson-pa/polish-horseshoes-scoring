@@ -1,30 +1,16 @@
 package info.andersonpa.polishhorseshoesscoring.backend;
 
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import info.andersonpa.polishhorseshoesscoring.db.DatabaseHelper;
 
 
-public class Activity_Base extends AppCompatActivity {
+public abstract class Activity_Base extends AppCompatActivity {
     protected String LOGTAG = getClass().getSimpleName();
     private DatabaseHelper databaseHelper = null;
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     public DatabaseHelper getHelper() {
         if (databaseHelper == null) {
