@@ -20,6 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private Dao<Game, Long> gameDao;
+    private Dao<Player, Long> playerDao;
     private Dao<Throw, Long> throwDao;
     private Dao<TeamStats, Long> teamStatsDao;
 
@@ -139,6 +140,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             gameDao = getDao(Game.class);
         }
         return gameDao;
+    }
+
+    Dao<Player, Long> getPlayerDao() throws SQLException {
+        if (playerDao == null) {
+            playerDao = getDao(Player.class);
+        }
+        return playerDao;
     }
 
     Dao<Throw, Long> getThrowDao() throws SQLException {

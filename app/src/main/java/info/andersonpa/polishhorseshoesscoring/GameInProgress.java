@@ -387,7 +387,7 @@ public class GameInProgress extends Activity_Base {
         rv_throws.setLayoutManager(new LinearLayoutManager(this));
 
         Intent intent = getIntent();
-        String gId = intent.getStringExtra("GID");
+        long gId = intent.getLongExtra("GID", -1);
         ag = new ActiveGame(this, gId);
 
         uiThrow = ag.getActiveThrow();

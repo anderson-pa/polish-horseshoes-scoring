@@ -1,6 +1,5 @@
 package info.andersonpa.polishhorseshoesscoring.backend;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import info.andersonpa.polishhorseshoesscoring.db.Game;
+import info.andersonpa.polishhorseshoesscoring.db.Player;
 import info.andersonpa.polishhorseshoesscoring.db.Throw;
 import info.andersonpa.polishhorseshoesscoring.enums.RuleType;
 import info.andersonpa.polishhorseshoesscoring.rulesets.RuleSet;
@@ -28,15 +28,16 @@ public class ActiveGame {
     private ArrayList<Throw> throws_list;
     private RuleSet rs;
     private List<Throw[]> innings_list = new ArrayList<>();
-    private String[] team_names = new String[2];
+    private String[] player_names = new String[2];
     private String session_name;
     private String venue_name;
     private Dao<Game, Long> g_dao;
+    private Dao<Player, Long> p_dao;
     private Dao<Throw, Long> t_dao;
     private boolean save_to_db;
 
 
-    public ActiveGame(Context context, String gId) {
+    public ActiveGame(Context context, long gId) {
         g_dao = Game.getDao(context);
         t_dao = Throw.getDao(context);
         this.context = context;
@@ -63,61 +64,36 @@ public class ActiveGame {
         this.save_to_db = save_to_db;
     }
 
-    private Game retrieveOrCreateGame(String gId) {
+    private Game retrieveOrCreateGame(long gId) {
         Uri pl_uri;
         Cursor cursor;
         long[] gm_ids = new long[2];
         int ruleset_id;
 
-        pl_uri = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
-                .authority("info.andersonpa.pocketleague.provider").appendPath("game")
-                .appendPath(gId).build();
-        try {
-            cursor = context.getContentResolver().query(pl_uri, null, null, null, null);
-            cursor.moveToFirst();
-            String ruleset_str = cursor.getString(cursor.getColumnIndex("ruleset_id"));
-            ruleset_id = Integer.valueOf(ruleset_str);
-            session_name = cursor.getString(cursor.getColumnIndex("session_name"));
-            venue_name = cursor.getString(cursor.getColumnIndex("venue_name"));
-
-            cursor.close();
-
-            pl_uri = new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
-                    .authority("info.andersonpa.pocketleague.provider").appendPath("game_member")
-                    .appendPath(gId).build();
-            cursor = context.getContentResolver().query(pl_uri, null, null, null, null);
-            while (cursor.moveToNext()) {
-                gm_ids[cursor.getPosition()] = 0; //cursor.getLong(cursor.getColumnIndex("id"));
-                team_names[cursor.getPosition()] = cursor.getString(cursor.getColumnIndex("team_name"));
-            }
-            cursor.close();
-        } catch (Exception e){
-            loge("No Content Provider: ", e);
-            session_name = "No session";
-            venue_name = "No venue";
-            team_names[0] = "Team 1";
-            team_names[1] = "Team 2";
-            gm_ids[0] = 0;
-            gm_ids[1] = 1;
-            ruleset_id = 1;
-        }
+        session_name = "No session";
+        venue_name = "No venue";
+        player_names[0] = "Team 1";
+        player_names[1] = "Team 2";
+        gm_ids[0] = 0;
+        gm_ids[1] = 1;
+        ruleset_id = 1;
 
         try {
-            g = g_dao.queryBuilder().where().eq(Game.POCKETLEAGUE_ID, gId).queryForFirst();
+            g = g_dao.queryBuilder().where().eq(Game.ID, gId).queryForFirst();
         } catch (SQLException e) {
             loge("Could not find  game: ", e);
         }
 
         if (g == null) {
             try {
-                g = new Game(gId, gm_ids[0], gm_ids[1], ruleset_id);
+                g = new Game(gm_ids[0], gm_ids[1], ruleset_id);
                 g_dao.create(g);
             } catch (SQLException e) {
                 loge("Could not create game: ", e);
             }
         }
 
-        log("Game ID is:" + g.getPocketLeagueId());
+        log("Game ID is:" + g.getId());
         return g;
     }
 
@@ -130,7 +106,7 @@ public class ActiveGame {
     }
 
     public String[] getTeamNames() {
-        return team_names;
+        return player_names;
     }
 
     public RuleSet getRuleSet() {

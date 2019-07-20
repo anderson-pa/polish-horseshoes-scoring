@@ -23,7 +23,7 @@ import java.util.List;
 
 @DatabaseTable
 public class Game {
-    public static final String POCKETLEAGUE_ID = "pocketleague_id";
+    public static final String ID = "id";
     public static final String FIRST_MEMBER = "member_1_id";
     public static final String SECOND_MEMBER = "member_2_id";
     public static final String RULESET_ID = "ruleset_id";
@@ -35,9 +35,6 @@ public class Game {
 
     @DatabaseField(generatedId = true)
     private long id;
-
-    @DatabaseField(canBeNull = false, unique = true)
-    private String pocketleague_id;
 
     @DatabaseField(canBeNull = false)
     private long member_1_id;
@@ -69,16 +66,15 @@ public class Game {
     public Game() {
     }
 
-    public Game(String pl_id, long member_1_id, long member_2_id, int ruleset_id, Date date_played) {
-        this.pocketleague_id = pl_id;
+    public Game(long member_1_id, long member_2_id, int ruleset_id, Date date_played) {
         this.member_1_id = member_1_id;
         this.member_2_id = member_2_id;
         this.ruleset_id = ruleset_id;
         this.date_played = date_played;
     }
 
-    public Game(String pl_id, long member_1_id, long member_2_id, int ruleset_id) {
-        this(pl_id, member_1_id, member_2_id, ruleset_id, new Date());
+    public Game(long member_1_id, long member_2_id, int ruleset_id) {
+        this(member_1_id, member_2_id, ruleset_id, new Date());
     }
 
     public static Dao<Game, Long> getDao(Context context) {
@@ -189,14 +185,6 @@ public class Game {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getPocketLeagueId() {
-        return pocketleague_id;
-    }
-
-    public void setPlId(String pocketleague_id) {
-        this.pocketleague_id = pocketleague_id;
     }
 
     public long getMember1Id() {
