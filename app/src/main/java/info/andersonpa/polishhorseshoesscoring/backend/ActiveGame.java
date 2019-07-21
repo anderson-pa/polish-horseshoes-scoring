@@ -1,8 +1,6 @@
 package info.andersonpa.polishhorseshoesscoring.backend;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
@@ -21,7 +19,7 @@ import info.andersonpa.polishhorseshoesscoring.enums.RuleType;
 import info.andersonpa.polishhorseshoesscoring.rulesets.RuleSet;
 
 public class ActiveGame {
-    protected String LOGTAG = getClass().getSimpleName();
+    private String LOGTAG = getClass().getSimpleName();
     private Context context;
     private int active_idx;
     private Game g;
@@ -34,11 +32,12 @@ public class ActiveGame {
     private Dao<Game, Long> g_dao;
     private Dao<Player, Long> p_dao;
     private Dao<Throw, Long> t_dao;
-    private boolean save_to_db;
+    private boolean save_to_db = true;
 
 
     public ActiveGame(Context context, long gId) {
         g_dao = Game.getDao(context);
+        p_dao = Player.getDao(context);
         t_dao = Throw.getDao(context);
         this.context = context;
         g = retrieveOrCreateGame(gId);
@@ -65,8 +64,6 @@ public class ActiveGame {
     }
 
     private Game retrieveOrCreateGame(long gId) {
-        Uri pl_uri;
-        Cursor cursor;
         long[] gm_ids = new long[2];
         int ruleset_id;
 
@@ -74,9 +71,8 @@ public class ActiveGame {
         venue_name = "No venue";
         player_names[0] = "Team 1";
         player_names[1] = "Team 2";
-        gm_ids[0] = 0;
-        gm_ids[1] = 1;
-        ruleset_id = 1;
+        gm_ids[1] = 1;  // gm_id[0] defaults to 0
+        ruleset_id = 0;
 
         try {
             g = g_dao.queryBuilder().where().eq(Game.ID, gId).queryForFirst();
@@ -93,7 +89,14 @@ public class ActiveGame {
             }
         }
 
-        log("Game ID is:" + g.getId());
+        try {
+            player_names[0] = p_dao.queryForId(g.getMember1Id()).getNickname();
+            player_names[1] = p_dao.queryForId(g.getMember2Id()).getNickname();
+        } catch (SQLException e) {
+            loge("Could not find  game: ", e);
+        }
+
+        log("Game ID is: " + g.getId());
         return g;
     }
 
@@ -351,6 +354,7 @@ public class ActiveGame {
     public void saveAllThrows() {
         updateScoresFrom(0);
         if (save_to_db && g != null) {
+            log("Saving all throws");
             final ArrayList<Long> throwIds = getThrowIds();
             try {
                 t_dao.callBatchTasks(new Callable<Void>() {
@@ -378,6 +382,7 @@ public class ActiveGame {
 
     public void saveGame() {
         if (save_to_db && g != null) {
+            log("Saving game");
             try {
                 g_dao.update(g);
             } catch (SQLException e) {
