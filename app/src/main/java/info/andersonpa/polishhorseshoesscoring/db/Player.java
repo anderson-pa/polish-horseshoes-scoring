@@ -12,24 +12,29 @@ import java.util.List;
 
 @DatabaseTable
 public class Player {
-    public static final String NAME = "name";
+    public static final String FIRST_NAME = "first_name";
+    public static final String LAST_NAME = "last_name";
     public static final String NICKNAME = "nickname";
 
     @DatabaseField(generatedId = true)
     private long id;
 
     @DatabaseField(canBeNull = false)
-    private String name;
+    private String first_name;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField()
+    private String last_name;
+
+    @DatabaseField()
     private String nickname;
 
 
     public Player() {
     }
 
-    public Player(String name, String nickname) {
-        this.name = name;
+    public Player(String first_name, String last_name, String nickname) {
+        this.first_name = first_name;
+        this.last_name = last_name;
         this.nickname = nickname;
     }
 
@@ -61,12 +66,20 @@ public class Player {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return first_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLastName() {
+        return last_name;
+    }
+
+    public void setLastName(String last_name) {
+        this.last_name = last_name;
     }
 
     public String getNickname() {
