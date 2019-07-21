@@ -31,6 +31,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
         tableClasses.add(Game.class);
+        tableClasses.add(Player.class);
         tableClasses.add(Throw.class);
         tableClasses.add(TeamStats.class);
 
@@ -42,10 +43,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         Log.i("DatabaseHelper", "Attempting to create db");
         try {
             createAll(connectionSource);
+            createPlayers();
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to create database", e);
         }
     }
+
+    public void createPlayers() {
+        Log.i("DatabaseHelper", "Attempting to add standard players to db");
+        try {
+            Dao<Player, Long> pDao = getPlayerDao();
+            pDao.create(new Player("Phillip", "Anderson", "pilip"));
+            pDao.create(new Player("Michael", "Cannamela", "miker"));
+            pDao.create(new Player("Michael", "Freeman", "freeeedom"));
+            pDao.create(new Player("Matt", "Tuttle", "king tut"));
+            pDao.create(new Player("Julian", "Spring", "juice"));
+            pDao.create(new Player("Zach", "Last", "zachomatic"));
+
+        } catch (SQLException e) {
+            Log.e(DatabaseHelper.class.getName(), "Unable to create all players", e);
+        }
+    }
+
 
     @Override
     public void onUpgrade(final SQLiteDatabase sqliteDatabase,
