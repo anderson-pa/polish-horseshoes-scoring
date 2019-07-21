@@ -68,4 +68,5 @@
     <string name="create">Create!</string>
     <string name="pDet_computeStats">Get Offensive Stats</string>
     <string name="pDet_computeDefensiveStats">Get Defensive Stats</string>
+    <string name="title_activity_create_new_game">Create New Game</string>
 </resources>
